@@ -59,6 +59,7 @@ def overdue_books():
     for book in library_books:
         if book['due_date'] and book['due_date'] < datetime.today() and not book['availability']: #checking if there is a due date
             overdue.append(book)
+    return overdue
 
 # -------- Level 5 --------
 # TODO: Convert your data into a Book class with methods like checkout() and return_book()
