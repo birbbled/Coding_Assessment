@@ -15,8 +15,8 @@ def view_books():
 def search_books(search_by, keyword):
     match = []
     for book in library_books:
-        if book[search_by].lower() == keyword.lower():
-            match.append(book)
+        if book[search_by].lower() == keyword.lower(): #basic searching in dictionaries. Using .lower() so it's case insensitive
+            match.append(book) #adding to a list
 
     return match
 
@@ -32,11 +32,11 @@ def search_books(search_by, keyword):
 def check_out(id):
     for book in library_books:
         if book.get('id') == id:
-            if book['available']:
+            if book['available']: #simple of way of checking if true
                 book['available'] = False
-                book['due_date'] = datetime.now() + timedelta(weeks=2)
+                book['due_date'] = datetime.now() + timedelta(weeks=2) #looked up on stackoverflow on what implementation looks like
                 book['checkouts'] += 1
-                print(f"You checked out {book['title']}")
+                print(f"You checked out {book['title']}") #fstring to print
             else:
                 print("This book is already checked out.")
 
@@ -57,14 +57,14 @@ def return_book(id):
 def overdue_books():
     overdue = []
     for book in library_books:
-        if book['due_date'] and book['due_date'] < datetime.today() and not book['availability']:
+        if book['due_date'] and book['due_date'] < datetime.today() and not book['availability']: #checking if there is a due date
             overdue.append(book)
 
 # -------- Level 5 --------
 # TODO: Convert your data into a Book class with methods like checkout() and return_book()
 # TODO: Add a simple menu that allows the user to choose different options like view, search, checkout, return, etc.
 
-class Book:
+class Book: #class
     def __init__(self, id, title, author, genre, available, due_date, checkouts):
         self.id = id
         self.title = title
@@ -74,10 +74,11 @@ class Book:
         self.due_date = due_date
         self.checkouts = checkouts
 
-
+#view using classes
     def view(self):
         print(f"id = {self.id}, title = {self.title}, author = {self.author}, genre = {self.genre}, available = {self.available}, due date = {self.due_date}, checkouts = {self.checkouts}")
 
+#checkout function using classes
     def check_out(self):
         if self.available:
             self.available = False
@@ -87,26 +88,30 @@ class Book:
         else:
             print("This book is already checked out!")
 
+#return books using classes
     def return_book(self):
         self.available = True
         self.due_date = ''
+        print("success!!")
 
+#overdue using classes
     def overdue(self):
         if self.due_date and not self.available and self.due_date < datetime.today():
             return True
-        return False
+        return False #if it isn't true, then return false
 
+#making dictionary into a list of Book
 library = []
 
 for data in library_books:
     if isinstance(data["due_date"], str):
-        data["due_date"] = datetime.strptime(data["due_date"], "%Y-%m-%d")
-    library.append(Book(**data))
+        data["due_date"] = datetime.strptime(data["due_date"], "%Y-%m-%d") #looked up implementation on how to convert string to datetime https://stackoverflow.com/questions/466345/convert-string-jun-1-2005-133pm-into-datetime
+    library.append(Book(**data)) #identifies dictionary format
 
 def search(search_by, keyword):
     sorted_books = []
     for book in library:
-        if search_by == 'author' and book.author.lower() == keyword.lower():
+        if search_by == 'author' and book.author.lower() == keyword.lower(): #easiest implementation to check both
                 sorted_books.append(book)
         elif search_by == 'genre' and book.genre.lower() == keyword.lower():
                 sorted_books.append(book)
@@ -130,39 +135,54 @@ def overdue_books():
 # - Save/load catalog to file (CSV or JSON)
 # - Anything else you want to build on top of the system!
 
+#Menu. Everything will use classes version
+
 if __name__ == "__main__":
-    # library[1].view()
-    print("Menu:")
-    print("1. View books in library")
-    print("2. Search")
-    print("3. Check out book")
-    print("4. Return book")
-    print("5. Overdue books")
+    run = True
+    while run:
+        print("Menu:")
+        print("1. View books in library")
+        print("2. Search")
+        print("3. Check out book")
+        print("4. Return book")
+        print("5. Overdue books")
+        print("6. Stop")
 
-    choice = int(input("What option do you want to choose today?"))
+        choice = int(input("What option do you want to choose today?"))
 
-    if choice == 1:
-        for book in library:
-            book.view()
-    elif choice == 2:
-        search_by = input("Would you like to sort by author or genre?")
-        keyword = input("Enter the specific author/genre")
-        for book in search(search_by.lower(), keyword.lower()):
-            book.view()
-    elif choice == 3:
-        id = input("Enter the id of the book you'd like to check out?")
-        for book in library:
-            if book.id == id:
-                book.check_out()
-    elif choice == 4:
-        id = input("Enter the id of the book you'd like to return")
-        for book in library:
-            if book.id == id:
-                book.return_book()
-        print("Success!")
-    elif choice == 5:
-        for book in overdue_books():
-            book.view()
+    #viewing all the books
+        if choice == 1:
+            for book in library:
+                book.view()
+
+       #sort by genre/author. needs user input. .lower() to make not case sensitive
+        elif choice == 2:
+            search_by = input("Would you like to sort by author or genre?")
+            keyword = input("Enter the specific author/genre")
+            for book in search(search_by.lower(), keyword.lower()):
+                book.view() #this is only way to view books because printing doesn't do what we want
+
+      #check out a book
+        elif choice == 3:
+            id = input("Enter the id of the book you'd like to check out?")
+            for book in library:
+                if book.id == id:
+                    book.check_out()
+
+        #return a book
+        elif choice == 4:
+            id = input("Enter the id of the book you'd like to return")
+            for book in library:
+                if book.id == id:
+                    book.return_book()
+
+        #view overdue books
+        elif choice == 5:
+            for book in overdue_books():
+                book.view()
+
+        elif choice == 6:
+            run = False #end the while loop.
 
 
     # view_books()
